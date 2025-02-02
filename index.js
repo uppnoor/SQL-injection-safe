@@ -27,6 +27,7 @@ const session_secret = process.env.NODE_SESSION_SECRET;
 const mongo_password = process.env.MONGO_PASSWORD;
 const mongo_user = process.env.MONGO_USER;
 const mongo_session_secret = process.env.SESSION_SECRET;
+const my_sql_port = process.env.MYSQL_PORT
 const mysql_password = process.env.MYSQL_DB_PASSWORD;
 const mysql_username = process.env.MYSQL_USERNAME;
 
@@ -36,11 +37,16 @@ var mongoStore = MongoStore.create({
 });
 
 const db = mysql.createConnection({
-    host: 'sql.freedb.tech',
+    host: 'mysql-194ec402-uppnoor41-36de.f.aivencloud.com',
+    port: my_sql_port,
     user: mysql_username,
     password: mysql_password,
-    database: 'freedb_freedb_user_db'
-});
+    database: 'defaultdb',
+    ssl: {
+      rejectUnauthorized: true,
+      ca: process.env.MYSQL_CA_CERT,
+    },
+  });
 
 db.connect(err => {
     if (err) {
