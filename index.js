@@ -102,16 +102,16 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/signup-submit', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, iden, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!username || !email || !password) {
+    if (!username || !iden || !password) {
         return res.redirect('/signup?error=Please fill in all fields');
     }
 
     const checkEmailQuery = 'SELECT email FROM users WHERE email = ?';
 
-    db.query(checkEmailQuery, [email], (err, result) => {
+    db.query(checkEmailQuery, [iden], (err, result) => {
         if (err) {
             console.error("Error querying email:", err);
             return res.status(500).send('Server error');
@@ -123,7 +123,7 @@ app.post('/signup-submit', async (req, res) => {
 
         const insertUserQuery = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
 
-        db.query(insertUserQuery, [username, email, hashedPassword], (err, result) => {
+        db.query(insertUserQuery, [username, iden, hashedPassword], (err, result) => {
             if (err) {
                 console.error('Error inserting user:', err);
                 return res.status(500).send('Error signing up');
@@ -134,15 +134,15 @@ app.post('/signup-submit', async (req, res) => {
 });
 
 app.post('/login-submit', async (req, res) => {
-    const { email, password } = req.body;
+    const { iden, password } = req.body;
 
-    if (!email || !password) {
+    if (!iden || !password) {
         return res.redirect('/login?error=Please fill in all fields');
     }
 
     const loginUserQuery = 'SELECT * FROM users WHERE email = ?';
 
-    db.query(loginUserQuery, [email], async (err, results) => {
+    db.query(loginUserQuery, [iden], async (err, results) => {
         if (err) {
             console.error('Error checking user:', err);
             return res.status(500).send('Error logging in');
